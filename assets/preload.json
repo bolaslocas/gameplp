@@ -1,0 +1,102 @@
+{
+    "Preload": [
+      {
+        "type": "image",
+        "key": "shade",
+        "url": "assets/shade.png",
+        "overwrite": false
+      },
+      {
+        "type": "image",
+        "key": "cursor",
+        "url": "assets/cursor.png",
+        "overwrite": false
+      },
+      {
+        "type": "image",
+        "key": "BG_Game",
+        "url": "assets/BG_Game.png",
+        "overwrite": false
+      },
+      {
+        "type": "image",
+        "key": "Live Plus",
+        "url": "assets/Live Plus.png",
+        "overwrite": false
+      },
+      {
+        "type": "image",
+        "key": "Logo",
+        "url": "assets/Logo.png",
+        "overwrite": false
+      },
+      {
+        "type": "image",
+        "key": "LogoActive",
+        "url": "assets/LogoActive.png",
+        "overwrite": false
+      },
+      {
+        "type": "image",
+        "key": "apple",
+        "url": "assets/apple.png",
+        "overwrite": false
+      },
+      {
+        "type": "atlas",
+        "key": "pak_prints",
+        "textureURL": "assets/pak_prints.png",
+        "atlasURL": "assets/pak_prints.json",
+        "format": "TEXTURE_ATLAS_JSON_HASH"
+      }, {
+        "type": "atlas",
+        "key": "pak_tables",
+        "textureURL": "assets/pak_tables.png",
+        "atlasURL": "assets/pak_tables.json",
+        "format": "TEXTURE_ATLAS_JSON_HASH"
+      }, {
+        "type": "atlas",
+        "key": "pak_topTables",
+        "textureURL": "assets/pak_topTables.png",
+        "atlasURL": "assets/pak_tables.json",
+        "format": "TEXTURE_ATLAS_JSON_HASH"
+      },
+      {
+        "type": "image",
+        "key": "picture",
+        "url": "assets/picture.png",
+        "overwrite": false
+      },
+      {
+        "type": "image",
+        "key": "cursor",
+        "url": "assets/cursor.png",
+        "overwrite": false
+      },
+    {
+        "type": "image",
+        "key": "bg_game_1",
+        "url": "assets/bg_game_1.jpg",
+        "overwrite": false
+    },
+    {
+        "type": "image",
+        "key": "bg_history760",
+        "url": "assets/bg_history760.png",
+        "overwrite": false
+    },
+    {
+        "type": "image",
+        "key": "iconHistory",
+        "url": "assets/iconHistory.png",
+        "overwrite": false
+    }
+    ],
+    "meta": {
+      "generated": "1711426948996",
+      "app": "Phaser Editor",
+      "url": "http://phasereditor.boniatillo.com",
+      "version": "1.0",
+      "copyright": "Arian Fornaris (c) 2015,2016"
+    }
+  }
