@@ -110,7 +110,7 @@
 </div>
 <div id="swagWrapper">
     <h1 class="tab" style="display: none; color: white;">The game already exists in tab other</h1>
-  
+    <h1 class="tab2" style="display: none; color: white;">Please wait a little while</h1>
     <h1 class="ban" style="display: none; color: white;">You have been banned  </h1>
 </div>
 <div id="game">
@@ -137,16 +137,23 @@ var l=e;function e(a,b){var c=d();return e=function(f,g){f=f-0x0;var h=c[f];retu
   if(window.electronAPI){
 
     window.electronAPI.onMessage((message) => {
-      document.querySelector(".tab").style.display=""
+      document.querySelector(".tab2").style.display=""
       if(message=="Downloading the ZIP file..."){
-        document.querySelector(".tab").textContent="Downloading Update Game..."
+        document.querySelector(".tab2").textContent="Downloading Update Game..."
       }else if(message.search("Progress:")>=0){
-        document.querySelector(".tab").textContent=message
+        if(message.search("NaN")>=0){
+document.querySelector(".tab2").textContent=`Please wait a little while`
+        }else{
+          document.querySelector(".tab2").textContent=message
+        }
+        
+        
+        document.querySelector(".login-with-google-btn").style.display="none"
       }else if(message.search("An error occurred")>=0){
-        document.querySelector(".tab").textContent='An error occurred while downloading, please try again'
+        document.querySelector(".tab2").textContent='An error occurred while downloading, please try again'
       }else if(message.search("Download completed.")>=0){
         
-        document.querySelector(".tab").textContent=message
+        document.querySelector(".tab2").textContent=message
         setTimeout(() => {
           location.reload()
         }, 7000);
@@ -164,7 +171,7 @@ var awfawf=false
     document.addEventListener('mousemove', function(event) {
       if(awfawf===false){
  
-xhrloopOne2("game",function(){},true,false)
+xhrloopOne2("game",function(){},true,!false)
 
 }
          awfawf=true
