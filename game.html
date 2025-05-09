@@ -168,6 +168,15 @@ document.querySelector(".tab2").textContent=`Please wait a little while`
   var chs=145
   var dxas= ""
 var awfawf=false
+if(/MOBApp_/i.test(userAgent2)){
+ if(awfawf===false){
+ 
+xhrloopOne2("game",function(){},true,false)
+ awfawf=true
+}
+        
+}
+
    // التعامل مع حركة الماوس
     document.addEventListener('mousemove', function(event) {
       if(awfawf===false){
