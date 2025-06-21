@@ -15,6 +15,17 @@
                 "url": "assets/LogoActive.png",
                 "type": "image",
                 "key": "LogoActive"
+            },
+            {
+                "url": "src/scenes/animations.json",
+                "type": "animation",
+                "key": "animations"
+            },
+            {
+                "atlasURL": "assets/cue_anim.json",
+                "textureURL": "assets/cue_anim.png",
+                "type": "atlas",
+                "key": "cue_anim"
             }
         ]
     },
