@@ -369,6 +369,7 @@ document.getElementById('downloadBtn').textContent = translations[lang].download
     document.getElementById('updateMessage').style.display = 'none';
     const banDiv = document.getElementById('banMessage');
     banDiv.style.display = 'block';
+	   document.getElementById('banMessage').textContent = locale.banText;
   }
  
   // --- دالة لإظهار رسالة تحميل التحديث ---
@@ -377,6 +378,7 @@ document.getElementById('downloadBtn').textContent = translations[lang].download
     document.getElementById('banMessage').style.display = 'none';
     const updateDiv = document.getElementById('updateMessage');
     updateDiv.style.display = 'block';
+	  document.getElementById('updateMessage').textContent = locale.updateText;
   }
 
   // --- دالة لإخفاء كل رسائل الحالة وإظهار شاشة تسجيل الدخول ---
@@ -392,6 +394,10 @@ document.getElementById('downloadBtn').textContent = translations[lang].download
   }
   function showLogin() {
 hideGame()
+	    document.getElementById('title').textContent = locale.title;
+  document.getElementById('message').textContent = locale.message;
+  document.getElementById('googleLoginBtn').textContent = locale.btnText;
+	  
     document.getElementById('banMessage').style.display = 'none';
     document.getElementById('updateMessage').style.display = 'none';
     document.getElementById('loginContent').style.display = 'block';
@@ -401,6 +407,7 @@ hideGame()
   function showTabWarning() {
     const tabWarn = document.getElementById('tabWarning');
     tabWarn.style.display = 'block';
+	    document.getElementById('tabWarningText').textContent = locale.tabWarningText;
   }
   // إخفاء تحذير التبويب عند الضغط على زر الإغلاق
   document.getElementById('closeTabWarningBtn').addEventListener('click', () => {
@@ -420,6 +427,7 @@ hideGame()
   // --- دالة لعرض تحذير تدوير الشاشة ---
   function showWrongRotation() {
     document.getElementById('wrongRotation').classList.add('visible');
+	   document.getElementById('rotateMessage').textContent = locale.rotateText;
   }
   // دالة لإخفاء تحذير تدوير الشاشة
   function hideWrongRotation() {
