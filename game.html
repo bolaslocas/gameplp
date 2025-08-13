@@ -334,7 +334,7 @@
   document.getElementById('tabWarningText').textContent = locale.tabWarningText;
   document.getElementById('updateMessage').textContent = locale.updateText;
   document.getElementById('rotateMessage').textContent = locale.rotateText;
-document.getElementById('downloadBtn').textContent = translations[lang].downloadText;
+document.getElementById('downloadBtn').textContent = locale.downloadText;
 
   const welcomeSplash = document.getElementById('welcomeSplash');
   const loadingParagraph = welcomeSplash.querySelector('p');
@@ -438,7 +438,7 @@ hideGame()
   }
 	function showDownload(){ 
 document.getElementById('loginContainer').style.display='block'; document.getElementById('downloadBtn').style.display='inline-block'; document.getElementById('loginContent').style.display='none'; document.getElementById('banMessage').style.display='none'; document.getElementById('updateMessage').style.display='none';
-document.getElementById('downloadBtn').textContent = translations[lang].downloadText;
+document.getElementById('downloadBtn').textContent = locale.downloadText;
  }
 
 function redirectToDownload(){  window.location.href="https://mega.nz/file/DRVHXDqT#VR48zp2-iI8GYDBRpbGWmUpQcEHSK-QfF96MEN7g_X0"; }
