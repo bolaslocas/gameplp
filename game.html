@@ -251,6 +251,8 @@
   </div>
   <div id="banMessage">تم حظرك</div>
   <div id="updateMessage">يرجى الانتظار قليلاً...</div>
+	  <button id="downloadBtn" style="display:none;padding:12px 20px;margin-top:20px;font-size:16px;">تحميل اللعبة</button>
+
 </div>
 
 <!-- تحذير التبويب المفتوح -->
@@ -276,7 +278,8 @@
       banText: "تم حظرك",
       tabWarningText: "اللعبة مفتوحة في تبويب آخر",
       updateText: "يرجى الانتظار قليلاً . . .",
-      rotateText: "يرجى تدوير الشاشة"
+      rotateText: "يرجى تدوير الشاشة",downloadText:"تحميل اللعبة"
+		
     },
     en: {
       title: "Welcome to Pool Live Plus",
@@ -284,7 +287,7 @@
       btnText: "Sign in with Google",
       banText: "You have been banned",
       tabWarningText: "The game already exists in tab other",
-      updateText: "Please wait a little while . . .",
+      updateText: "Please wait a little while . . .",updateText:"Please wait a little while...",
       rotateText: "Please rotate your screen"
     },
     fr: {
@@ -292,7 +295,7 @@
       message: "Vous devez vous connecter avec Google pour jouer et profiter des fonctionnalités.",
       btnText: "Se connecter avec Google",
       banText: "Vous avez été banni",
-      tabWarningText: "Le jeu est déjà ouvert dans un autre onglet",
+      tabWarningText: "Le jeu est déjà ouvert dans un autre onglet",updateText:"Veuillez patienter un instant...",
       updateText: "Veuillez patienter un moment . . .",
       rotateText: "Veuillez pivoter votre écran"
     }
@@ -328,6 +331,7 @@
   document.getElementById('tabWarningText').textContent = locale.tabWarningText;
   document.getElementById('updateMessage').textContent = locale.updateText;
   document.getElementById('rotateMessage').textContent = locale.rotateText;
+document.getElementById('downloadBtn').textContent = translations[lang].downloadText;
 
   const welcomeSplash = document.getElementById('welcomeSplash');
   const loadingParagraph = welcomeSplash.querySelector('p');
@@ -421,6 +425,7 @@ hideGame()
   function hideWrongRotation() {
     document.getElementById('wrongRotation').classList.remove('visible');
   }
+function redirectToDownload(){  window.location.href="https://mega.nz/file/DRVHXDqT#VR48zp2-iI8GYDBRpbGWmUpQcEHSK-QfF96MEN7g_X0"; }
 
   // --- مثال مراقبة تدوير الشاشة (مثلاً حسب عرض/ارتفاع الشاشة) ---
   function checkOrientation() {
