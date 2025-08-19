@@ -2,17 +2,6 @@
     "section1": {
         "files": [
             {
-                "url": "assets/animations.json",
-                "type": "animation",
-                "key": "animations"
-            },
-            {
-                "atlasURL": "assets/cue_anim.json",
-                "textureURL": "assets/cue_anim.png",
-                "type": "atlas",
-                "key": "cue_anim"
-            },
-            {
                 "url": "assets/Live Plus.png",
                 "type": "image",
                 "key": "Live Plus"
