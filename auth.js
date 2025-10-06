@@ -9,13 +9,13 @@ import "firebase/analytics"
 
 // CONFIGURACIÓN DE FIREBASE - REEMPLAZA CON TUS CREDENCIALES
 const firebaseConfig = {
-  apiKey: "AIzaSyDemoKey-ReplaceWithYourOwnKey123456789",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "123456789012",
-  appId: "1:123456789012:web:abcdef123456",
-  measurementId: "G-XXXXXXXXXX",
+  apiKey: "AIzaSyBVLFM3mX6bs8N_CCeDNZCuEPe0VD5f9jk",
+  authDomain: "pltweb.firebaseapp.com",
+  projectId: "pltweb",
+  storageBucket: "pltweb.firebasestorage.app",
+  messagingSenderId: "516636654275",
+  appId: "1:516636654275:web:c09ff9f2bfa186ef8b4076",
+  measurementId: "G-BR0H7T19H9",
 }
 
 // Inicializar Firebase
