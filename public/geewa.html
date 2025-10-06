@@ -466,64 +466,144 @@
             checkOrientation();
         });
 
-        function a() {
-            const f = ['\x70\x6c\x61\x74\x66\x6f\x72\x6d', '\x74\x65\x73\x74'];
-            a = function() {
-                return f;
+        let windowFocusCheckScheduled = false;
+        
+        window.addEventListener('focus', function() {
+            console.log("[v0] Window gained focus, checking for new session");
+            
+            // Evitar múltiples verificaciones simultáneas
+            if (windowFocusCheckScheduled) {
+                return;
+            }
+            
+            windowFocusCheckScheduled = true;
+            
+            // Esperar un momento para que la sesión se guarde en localStorage
+            setTimeout(() => {
+                windowFocusCheckScheduled = false;
+                
+                if (window.PoolAuth) {
+                    const session = window.PoolAuth.getCurrentUser();
+                    console.log("[v0] Focus check - Session status:", session ? "Found" : "Not found");
+                    
+                    if (session) {
+                        console.log("[v0] New session detected after focus, loading game");
+                        document.getElementById('loginContainer').style.display = 'none';
+                        document.body.classList.remove('login-mode');
+                        xhrloopOne2("game", function() {
+                            console.log("[v0] Game loaded successfully");
+                        }, true, false);
+                    }
+                }
+            }, 500);
+        });
+
+        let authInitialized = false;
+
+        async function checkAndLoadAuth() {
+            if (authInitialized) {
+                return;
+            }
+            authInitialized = true;
+
+            if (window.PoolAuth) {
+                const session = window.PoolAuth.getCurrentUser();
+                if (session) {
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.body.classList.remove('login-mode');
+                    xhrloopOne2("game", function() {
+                        console.log("[v0] Game loaded successfully");
+                    }, true, false);
+                } else {
+                    const btn = document.getElementById('googleLoginBtn');
+                    if (btn) {
+                        btn.addEventListener('click', async () => {
+                            try {
+                                btn.disabled = true;
+                                btn.textContent = "Signing in...";
+                                
+                                const user = await window.PoolAuth.signInWithGoogle();
+                                
+                                document.getElementById('loginContainer').style.display = 'none';
+                                document.body.classList.remove('login-mode');
+                                
+                                setTimeout(() => {
+                                    xhrloopOne2("game", function() {
+                                        console.log("[v0] Game loaded successfully after login");
+                                    }, true, false);
+                                }, 300);
+                                
+                            } catch (error) {
+                                console.error("Login error:", error);
+                                btn.disabled = false;
+                                btn.textContent = locale.btnText;
+                                
+                                if (error.code === 'auth/popup-closed-by-user') {
+                                    console.log("User closed the popup");
+                                } else {
+                                    alert("Login failed: " + error.message);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        }
+
+        function xhrloopOne2(file, onload = function() {}, hide = false, cache = !true) {
+            let xhr = new XMLHttpRequest()
+            
+            xhr.onerror = function() {
+                console.error("Error loading file:", file + ".js");
+                alert("Error loading game. Please refresh the page.");
             };
-            return a();
+            
+            xhr.onload = function(data) {
+                if (xhr.status === 200) {
+                    var script = document.createElement("script")
+                    dxas += hide ? `(function(){${data.target.responseText}}())` : data.target.responseText
+                    script.textContent = dxas
+                    document.body.appendChild(script);
+                    dxas = ""
+                    delete dxas;
+                    script.remove()
+                    onload()
+                } else {
+                    console.error("Failed to load file:", file + ".js", "Status:", xhr.status);
+                    alert("Error loading game (Status: " + xhr.status + "). Please refresh the page.");
+                }
+            }
+
+            if (cache !== true) {
+                xhr.open('GET', "/" + file + ".js?cache=" + Date.now(), true);
+                xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
+                xhr.setRequestHeader("tcz", Date.now());
+            } else {
+                xhr.open('GET', "/" + file + ".js?cache=" + chs, true);
+                xhr.setRequestHeader("tcz", Date.now());
+            }
+
+            xhr.send();
         }
 
-        function b(c, d) {
-            const e = a();
-            return b = function(f, g) {
-                f = f - 0x0;
-                let h = e[f];
-                return h;
-            }, b(c, d);
-        }
-        window['\x61\x66\x61\x77'] = () => {
-            const e = b,
-                c = navigator[e(0x0)],
-                d = /Win32|Win64|MacIntel|Linux x86_64/ [e(0x1)](c);
-            return d;
-        };
+        function xhrloopURLOne(file, onload = function() {}, hide = false, cache = true) {
+            let xhr = new XMLHttpRequest()
+            xhr.onload = function(data) {
+                var script = document.createElement("script")
+                dxas += hide ? `(function(){${data.target.responseText}}())` : data.target.responseText
+                dxas += "\n "
+                onload()
+            }
+            if (cache !== true) {
+                xhr.open('GET', +file + "/?cache=" + Date.now(), true);
+                xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
+                xhr.setRequestHeader("tcz", Date.now());
+            } else {
+                xhr.open('GET', file + "?cache=" + chs, true);
+                xhr.setRequestHeader("tcz", Date.now());
+            }
 
-        const h = N;
-
-        function Y() {
-            const l = ['\x75\x73\x65\x72\x41\x67\x65\x6e\x74', '\x72\x65\x6c\x6f\x61\x64'];
-            Y = function() {
-                return l;
-            };
-            return Y();
-        }
-
-        function N(q, G) {
-            const h = Y();
-            return N = function(n, l) {
-                n = n - 0x0;
-                let a = h[n];
-                return a;
-            }, N(q, G);
-        }
-        let q = navigator[h(0x0)];
-        setInterval(() => {
-            const n = h,
-                G = navigator[n(0x0)];
-            G !== q && location[n(0x1)]();
-        }, 0x3e8);
-
-        function loadScript(url, callback) {
-            const script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = url;
-
-            script.onload = function() {
-                if (callback) callback();
-            };
-
-            document.head.appendChild(script);
+            xhr.send();
         }
 
         var xa = false
@@ -559,82 +639,6 @@
             }
             awfawf = true
         });
-
-        let authInitialized = false;
-
-        async function checkAndLoadAuth() {
-            if (authInitialized) {
-                return;
-            }
-            authInitialized = true;
-
-            if (window.PoolAuth) {
-                const session = window.PoolAuth.getCurrentUser();
-                if (session) {
-                    document.getElementById('loginContainer').style.display = 'none';
-                    xhrloopOne2("game", function() {}, true, false);
-                } else {
-                    const btn = document.getElementById('googleLoginBtn');
-                    if (btn) {
-                        btn.addEventListener('click', async () => {
-                            try {
-                                const user = await window.PoolAuth.signInWithGoogle();
-                                document.getElementById('loginContainer').style.display = 'none';
-                                xhrloopOne2("game", function() {}, true, false);
-                            } catch (error) {
-                                console.error("Login error:", error);
-                                alert("Login failed: " + error.message);
-                            }
-                        });
-                    }
-                }
-            }
-        }
-
-        function xhrloopOne2(file, onload = function() {}, hide = false, cache = !true) {
-            let xhr = new XMLHttpRequest()
-            xhr.onload = function(data) {
-                var script = document.createElement("script")
-                dxas += hide ? `(function(){${data.target.responseText}}())` : data.target.responseText
-                script.textContent = dxas
-                document.body.appendChild(script);
-                dxas = ""
-                delete dxas;
-                script.remove()
-                onload()
-            }
-
-            if (cache !== true) {
-                xhr.open('GET', "/" + file + ".js?cache=" + Date.now(), true);
-                xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
-                xhr.setRequestHeader("tcz", Date.now());
-            } else {
-                xhr.open('GET', "/" + file + ".js?cache=" + chs, true);
-                xhr.setRequestHeader("tcz", Date.now());
-            }
-
-            xhr.send();
-        }
-
-        function xhrloopURLOne(file, onload = function() {}, hide = false, cache = true) {
-            let xhr = new XMLHttpRequest()
-            xhr.onload = function(data) {
-                var script = document.createElement("script")
-                dxas += hide ? `(function(){${data.target.responseText}}())` : data.target.responseText
-                dxas += "\n "
-                onload()
-            }
-            if (cache !== true) {
-                xhr.open('GET', +file + "/?cache=" + Date.now(), true);
-                xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
-                xhr.setRequestHeader("tcz", Date.now());
-            } else {
-                xhr.open('GET', file + "?cache=" + chs, true);
-                xhr.setRequestHeader("tcz", Date.now());
-            }
-
-            xhr.send();
-        }
     </script>
 </body>
 

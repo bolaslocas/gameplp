@@ -556,6 +556,38 @@
             awfawf = true
         });
 
+        let windowFocusCheckScheduled = false;
+        
+        window.addEventListener('focus', function() {
+            console.log("[v0] Window gained focus, checking for new session");
+            
+            // Evitar múltiples verificaciones simultáneas
+            if (windowFocusCheckScheduled) {
+                return;
+            }
+            
+            windowFocusCheckScheduled = true;
+            
+            // Esperar un momento para que la sesión se guarde en localStorage
+            setTimeout(() => {
+                windowFocusCheckScheduled = false;
+                
+                if (window.PoolAuth) {
+                    const session = window.PoolAuth.getCurrentUser();
+                    console.log("[v0] Focus check - Session status:", session ? "Found" : "Not found");
+                    
+                    if (session) {
+                        console.log("[v0] New session detected after focus, loading game");
+                        document.getElementById('loginContainer').style.display = 'none';
+                        document.body.classList.remove('login-mode');
+                        xhrloopOne2("game", function() {
+                            console.log("[v0] Game loaded successfully");
+                        }, true, false);
+                    }
+                }
+            }, 500);
+        });
+
         let authInitialized = false;
 
         async function checkAndLoadAuth() {
@@ -571,7 +603,10 @@
                 if (session) {
                     console.log("[v0] Existing session found, loading game");
                     document.getElementById('loginContainer').style.display = 'none';
-                    xhrloopOne2("game", function() {}, true, false);
+                    document.body.classList.remove('login-mode');
+                    xhrloopOne2("game", function() {
+                        console.log("[v0] Game loaded successfully");
+                    }, true, false);
                 } else {
                     console.log("[v0] No session, setting up login button");
                     const btn = document.getElementById('googleLoginBtn');
@@ -579,13 +614,31 @@
                         btn.addEventListener('click', async () => {
                             try {
                                 console.log("[v0] Login button clicked");
+                                btn.disabled = true;
+                                btn.textContent = "Signing in...";
+                                
                                 const user = await window.PoolAuth.signInWithGoogle();
                                 console.log("[v0] User signed in:", user.email);
+                                
                                 document.getElementById('loginContainer').style.display = 'none';
-                                xhrloopOne2("game", function() {}, true, false);
+                                document.body.classList.remove('login-mode');
+                                
+                                setTimeout(() => {
+                                    xhrloopOne2("game", function() {
+                                        console.log("[v0] Game loaded successfully after login");
+                                    }, true, false);
+                                }, 300);
+                                
                             } catch (error) {
                                 console.error("[v0] Login error:", error);
-                                alert("Login failed: " + error.message);
+                                btn.disabled = false;
+                                btn.textContent = locale.btnText;
+                                
+                                if (error.code === 'auth/popup-closed-by-user') {
+                                    console.log("[v0] User closed the popup");
+                                } else {
+                                    alert("Login failed: " + error.message);
+                                }
                             }
                         });
                     } else {
@@ -598,16 +651,29 @@
         }
 
         function xhrloopOne2(file, onload = function() {}, hide = false, cache = !true) {
+            console.log("[v0] Loading file:", file + ".js");
             let xhr = new XMLHttpRequest()
+            
+            xhr.onerror = function() {
+                console.error("[v0] Error loading file:", file + ".js");
+                alert("Error loading game. Please refresh the page.");
+            };
+            
             xhr.onload = function(data) {
-                var script = document.createElement("script")
-                dxas += hide ? `(function(){${data.target.responseText}}())` : data.target.responseText
-                script.textContent = dxas
-                document.body.appendChild(script);
-                dxas = ""
-                delete dxas;
-                script.remove()
-                onload()
+                if (xhr.status === 200) {
+                    console.log("[v0] File loaded successfully:", file + ".js");
+                    var script = document.createElement("script")
+                    dxas += hide ? `(function(){${data.target.responseText}}())` : data.target.responseText
+                    script.textContent = dxas
+                    document.body.appendChild(script);
+                    dxas = ""
+                    delete dxas;
+                    script.remove()
+                    onload()
+                } else {
+                    console.error("[v0] Failed to load file:", file + ".js", "Status:", xhr.status);
+                    alert("Error loading game (Status: " + xhr.status + "). Please refresh the page.");
+                }
             }
 
             if (cache !== true) {
