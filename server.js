@@ -26,7 +26,7 @@ const server = http.createServer((req, res) => {
   let filePath = '.' + req.url;
   
   if (filePath === './' || filePath === './') {
-    filePath = './game.html';
+    filePath = './geewa.html';
   }
 
   const extname = String(path.extname(filePath)).toLowerCase();
@@ -55,5 +55,5 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, HOST, () => {
   console.log(`Server running at http://${HOST}:${PORT}/`);
-  console.log(`Open game.html to start playing`);
+  console.log(`Open geewa.html to start playing`);
 });
