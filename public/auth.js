@@ -1,5 +1,13 @@
 // Firebase Authentication Utilities for Pool Live Plus
 
+// Wait for Firebase to be loaded
+if (typeof window.firebase === "undefined") {
+  console.error("[v0] Firebase SDK not loaded! Check script tags in HTML.")
+  throw new Error("Firebase SDK not loaded")
+}
+
+console.log("[v0] Firebase SDK loaded successfully")
+
 // Import Firebase
 const firebase = window.firebase
 
@@ -14,17 +22,23 @@ const firebaseConfig = {
   measurementId: "G-BR0H7T19H9",
 }
 
+console.log("[v0] Initializing Firebase authentication...")
+
 // Inicializar Firebase
 let app, auth
 try {
   if (!firebase.apps.length) {
     app = firebase.initializeApp(firebaseConfig)
+    console.log("[v0] Firebase initialized successfully")
   } else {
     app = firebase.app()
+    console.log("[v0] Using existing Firebase app")
   }
   auth = firebase.auth()
+  console.log("[v0] Firebase Auth initialized successfully")
 } catch (error) {
-  console.error("Firebase initialization error:", error)
+  console.error("[v0] Firebase initialization error:", error)
+  throw error
 }
 
 // Configuración de sesión
@@ -86,6 +100,12 @@ function isAuthenticated() {
 // Iniciar sesión con Google
 async function signInWithGoogle() {
   try {
+    console.log("[v0] Starting Google sign-in...")
+
+    if (!auth) {
+      throw new Error("Firebase Auth not initialized")
+    }
+
     const provider = new firebase.auth.GoogleAuthProvider()
 
     provider.addScope("profile")
@@ -93,11 +113,13 @@ async function signInWithGoogle() {
 
     const result = await auth.signInWithPopup(provider)
 
+    console.log("[v0] Sign-in successful:", result.user.email)
+
     saveSession(result.user)
 
     return result.user
   } catch (error) {
-    console.error("Sign in error:", error.code, error.message)
+    console.error("[v0] Sign in error:", error.code, error.message)
     throw error
   }
 }
@@ -146,3 +168,5 @@ window.PoolAuth = {
   getAuth: () => auth,
   getFirebase: () => firebase,
 }
+
+console.log("[v0] PoolAuth initialized and ready")
