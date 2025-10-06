@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <title>Pool Live Plus - Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      overflow: hidden;
+      -webkit-touch-callout: none;
+      -webkit-text-size-adjust: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-image: url('bggg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 0;
+    }
+
+    #loginContainer {
+      position: relative;
+      z-index: 1;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 50px 60px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+      max-width: 400px;
+      width: 90%;
+      color: white;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #loginContainer h1 {
+      font-size: 2.2em;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    #loginContainer p {
+      font-size: 16px;
+      margin-bottom: 35px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .login-with-google-btn {
+      transition: all 0.3s ease;
+      padding: 14px 20px 14px 50px;
+      border: none;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      color: #444;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=);
+      background-color: white;
+      background-repeat: no-repeat;
+      background-position: 16px center;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+    }
+
+    .login-with-google-btn:hover {
+      background-color: #f8f8f8;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .login-with-google-btn:active {
+      transform: translateY(0);
+    }
+
+    .login-with-google-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #errorMessage {
+      display: none;
+      margin-top: 20px;
+      padding: 12px;
+      background: rgba(255, 68, 68, 0.2);
+      border: 1px solid rgba(255, 68, 68, 0.5);
+      border-radius: 6px;
+      color: #ff6b6b;
+      font-size: 14px;
+    }
+
+    #loadingMessage {
+      display: none;
+      margin-top: 20px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .config-warning {
+      margin-top: 30px;
+      padding: 15px;
+      background: rgba(255, 193, 7, 0.15);
+      border: 1px solid rgba(255, 193, 7, 0.4);
+      border-radius: 8px;
+      font-size: 13px;
+      color: #ffc107;
+      text-align: left;
+      line-height: 1.6;
+    }
+
+    .config-warning strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .config-warning code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+
+    @media (max-width: 480px) {
+      #loginContainer {
+        padding: 40px 30px;
+      }
+
+      #loginContainer h1 {
+        font-size: 1.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="overlay"></div>
+  
+  <div id="loginContainer">
+    <h1>Pool Live Plus</h1>
+    <p id="welcomeText">Inicia sesión con Google para jugar online</p>
+    
+    <button class="login-with-google-btn" id="googleLoginBtn">
+      <span id="btnText">Iniciar sesión con Google</span>
+    </button>
+    
+    <div id="loadingMessage">
+      <span class="spinner"></span>
+      <span id="loadingText">Iniciando sesión...</span>
+    </div>
+    
+    <div id="errorMessage"></div>
+
+    <div class="config-warning">
+      <strong>⚠️ Configuración requerida</strong>
+      Para que funcione la autenticación:
+      <br>1. Crea un proyecto en <code>console.firebase.google.com</code>
+      <br>2. Activa Google Authentication
+      <br>3. Reemplaza la configuración en <code>auth.js</code>
+      <br>4. Lee <code>FIREBASE_SETUP.md</code> para instrucciones detalladas
+    </div>
+  </div>
+
+   Firebase SDK 
+  <script src="lib/firebasejs_7.22.0.js"></script>
+  
+   Authentication utilities 
+  <script src="auth.js"></script>
+
+  <script>
+    console.log("[v0] App.html loaded - Login page");
+
+    // Traducciones multiidioma
+    const translations = {
+      ar: {
+        welcome: "يجب عليك تسجيل الدخول عبر حساب جوجل للعب أونلاين",
+        btnText: "تسجيل الدخول عبر جوجل",
+        loading: "جارٍ تسجيل الدخول...",
+        error: "حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.",
+        redirecting: "جارٍ التوجيه إلى اللعبة...",
+        cancelled: "تم إلغاء تسجيل الدخول",
+        configError: "خطأ في تكوين Firebase. تحقق من auth.js"
+      },
+      en: {
+        welcome: "Sign in with Google to play online",
+        btnText: "Sign in with Google",
+        loading: "Signing in...",
+        error: "An error occurred during sign in. Please try again.",
+        redirecting: "Redirecting to game...",
+        cancelled: "Sign in cancelled",
+        configError: "Firebase configuration error. Check auth.js"
+      },
+      fr: {
+        welcome: "Connectez-vous avec Google pour jouer en ligne",
+        btnText: "Se connecter avec Google",
+        loading: "Connexion en cours...",
+        error: "Une erreur s'est produite lors de la connexion. Veuillez réessayer.",
+        redirecting: "Redirection vers le jeu...",
+        cancelled: "Connexion annulée",
+        configError: "Erreur de configuration Firebase. Vérifiez auth.js"
+      },
+      es: {
+        welcome: "Inicia sesión con Google para jugar online",
+        btnText: "Iniciar sesión con Google",
+        loading: "Iniciando sesión...",
+        error: "Ocurrió un error al iniciar sesión. Por favor, inténtalo de nuevo.",
+        redirecting: "Redirigiendo al juego...",
+        cancelled: "Inicio de sesión cancelado",
+        configError: "Error de configuración de Firebase. Revisa auth.js"
+      }
+    };
+
+    // Detectar idioma del usuario
+    const userLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase().split('-')[0];
+    const locale = translations[userLang] || translations['en'];
+
+    // Aplicar traducciones
+    document.getElementById('welcomeText').textContent = locale.welcome;
+    document.getElementById('btnText').textContent = locale.btnText;
+    document.getElementById('loadingText').textContent = locale.loading;
+
+    const loginBtn = document.getElementById('googleLoginBtn');
+    const loadingMsg = document.getElementById('loadingMessage');
+    const errorMsg = document.getElementById('errorMessage');
+
+    // Verificar si ya está autenticado
+    console.log("[v0] Checking if user is already authenticated");
+    if (window.PoolAuth && window.PoolAuth.isAuthenticated()) {
+      console.log("[v0] User already authenticated, redirecting to game");
+      showLoading(locale.redirecting);
+      setTimeout(() => {
+        window.location.href = 'game.html';
+      }, 1000);
+    } else {
+      console.log("[v0] User not authenticated, showing login button");
+    }
+
+    // Manejar inicio de sesión con Google
+    loginBtn.addEventListener('click', async () => {
+      try {
+        loginBtn.disabled = true;
+        showLoading(locale.loading);
+        hideError();
+
+        console.log("[v0] User clicked login button");
+        
+        // Verificar que PoolAuth esté disponible
+        if (!window.PoolAuth) {
+          throw new Error("PoolAuth not initialized");
+        }
+
+        const user = await window.PoolAuth.signInWithGoogle();
+        
+        console.log("[v0] Sign in successful:", user.email);
+        showLoading(locale.redirecting);
+        
+        // Redirigir al juego después del login exitoso
+        setTimeout(() => {
+          window.location.href = 'game.html';
+        }, 1500);
+
+      } catch (error) {
+        console.error("[v0] Login error:", error);
+        
+        loginBtn.disabled = false;
+        hideLoading();
+        
+        let errorText = locale.error;
+        
+        // Manejar diferentes tipos de errores
+        if (error.code === 'auth/popup-closed-by-user') {
+          errorText = locale.cancelled;
+        } else if (error.code === 'auth/configuration-not-found' || error.message.includes('not initialized')) {
+          errorText = locale.configError;
+        } else if (error.code === 'auth/unauthorized-domain') {
+          errorText = userLang === 'es' ? 'Dominio no autorizado. Configura Firebase.' :
+                      userLang === 'ar' ? 'نطاق غير مصرح به. قم بتكوين Firebase.' :
+                      userLang === 'fr' ? 'Domaine non autorisé. Configurez Firebase.' :
+                      'Unauthorized domain. Configure Firebase.';
+        }
+        
+        showError(errorText);
+      }
+    });
+
+    function showLoading(text) {
+      loadingMsg.style.display = 'block';
+      if (text) {
+        document.getElementById('loadingText').textContent = text;
+      }
+    }
+
+    function hideLoading() {
+      loadingMsg.style.display = 'none';
+    }
+
+    function showError(message) {
+      errorMsg.textContent = message;
+      errorMsg.style.display = 'block';
+    }
+
+    function hideError() {
+      errorMsg.style.display = 'none';
+    }
+
+    // Verificar orientación para móviles
+    function checkOrientation() {
+      if (window.innerWidth < window.innerHeight && window.innerWidth < 768) {
+        // Modo retrato en móvil - sugerir rotación
+        console.log("[v0] Portrait mode detected on mobile");
+      }
+    }
+
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('load', checkOrientation);
+
+    console.log("[v0] Login page ready");
+  </script>
+</body>
+</html>
