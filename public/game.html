@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1">
+<title>Pool Live Plus</title>
+<style>
+</style>
+</head>
+<body>
+
+<!-- Updated Firebase SDK to use CDN -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<!-- Cargar auth.js antes del script principal -->
+<script src="auth.js"></script>
+
+<script>
+
+  var chs = 145;
+  var dxas = "";
+  var awfawf = false;
+  
+  let gameLoadAttempts = 0;
+  const MAX_LOAD_ATTEMPTS = 3;
+  let gameLoadTimeout = null;
+
+  function loadGameWithRetry() {
+    console.log("[v0] Attempting to load game, attempt:", gameLoadAttempts + 1);
+    
+    if (gameLoadAttempts >= MAX_LOAD_ATTEMPTS) {
+      console.error("[v0] Max load attempts reached");
+      alert("Failed to load game after " + MAX_LOAD_ATTEMPTS + " attempts. Please refresh the page or contact support.");
+      return;
+    }
+    
+    gameLoadAttempts++;
+    
+    // Limpiar timeout anterior si existe
+    if (gameLoadTimeout) {
+      clearTimeout(gameLoadTimeout);
+    }
+    
+    // Establecer timeout de 10 segundos para la carga
+    gameLoadTimeout = setTimeout(() => {
+      console.error("[v0] Game load timeout");
+      if (gameLoadAttempts < MAX_LOAD_ATTEMPTS) {
+        console.log("[v0] Retrying game load...");
+        loadGameWithRetry();
+      }
+    }, 10000);
+    
+    xhrloopOne2("game", function() {
+      console.log("[v0] Game loaded successfully");
+      clearTimeout(gameLoadTimeout);
+      gameLoadAttempts = 0; // Reset counter on success
+    }, true, false);
+  }
+
+  if (/MOBApp_/i.test(userAgent2)) {
+    if (awfawf === false) {
+      loadGameWithRetry();
+      awfawf = true;
+    }
+  }
+
+  let gameLoadInitiated = false;
+  
+  function initiateGameLoad() {
+    if (!gameLoadInitiated && !awfawf) {
+      console.log("[v0] Initiating game load from user interaction");
+      gameLoadInitiated = true;
+      awfawf = true;
+      loadGameWithRetry();
+    }
+  }
+
+  document.addEventListener('mousemove', initiateGameLoad, { once: true });
+  document.addEventListener('touchstart', initiateGameLoad, { once: true });
+  document.addEventListener('click', initiateGameLoad, { once: true });
+
+  function xhrloopOne2(file, onload = function() {}, hide = false, cache = !true) {
+    console.log("[v0] Loading file:", file + ".js");
+    let xhr = new XMLHttpRequest();
+    
+    xhr.timeout = 8000; // 8 segundos de timeout
+    
+    xhr.ontimeout = function() {
+      console.error("[v0] Request timeout for file:", file + ".js");
+      if (gameLoadAttempts < MAX_LOAD_ATTEMPTS) {
+        console.log("[v0] Retrying after timeout...");
+        setTimeout(() => loadGameWithRetry(), 1000);
+      } else {
+        alert("Connection timeout. Please check your internet and refresh the page.");
+      }
+    };
+    
+    xhr.onerror = function() {
+      console.error("[v0] Network error loading file:", file + ".js");
+      if (gameLoadAttempts < MAX_LOAD_ATTEMPTS) {
+        console.log("[v0] Retrying after network error...");
+        setTimeout(() => loadGameWithRetry(), 1000);
+      } else {
+        alert("Network error. Please check your connection and refresh the page.");
+      }
+    };
+    
+    xhr.onload = function(data) {
+      if (xhr.status === 200) {
+        console.log("[v0] File loaded successfully:", file + ".js", "Size:", data.target.responseText.length, "bytes");
+        
+        // Verificar que el contenido no esté vacío
+        if (!data.target.responseText || data.target.responseText.length < 100) {
+          console.error("[v0] File content is empty or too small");
+          if (gameLoadAttempts < MAX_LOAD_ATTEMPTS) {
+            console.log("[v0] Retrying due to empty content...");
+            setTimeout(() => loadGameWithRetry(), 1000);
+          } else {
+            alert("Game file is corrupted. Please refresh the page.");
+          }
+          return;
+        }
+        
+        try {
+          var script = document.createElement("script");
+          dxas += hide ? `(function(){${data.target.responseText}}())` : data.target.responseText;
+          script.textContent = dxas;
+          document.body.appendChild(script);
+          dxas = "";
+          delete dxas;
+          script.remove();
+          console.log("[v0] Script executed successfully");
+          onload();
+        } catch (error) {
+          console.error("[v0] Error executing script:", error);
+          if (gameLoadAttempts < MAX_LOAD_ATTEMPTS) {
+            console.log("[v0] Retrying after script execution error...");
+            setTimeout(() => loadGameWithRetry(), 1000);
+          } else {
+            alert("Error executing game code: " + error.message);
+          }
+        }
+      } else if (xhr.status === 404) {
+        console.error("[v0] File not found (404):", file + ".js");
+        console.error("[v0] Requested URL:", xhr.responseURL);
+        alert("Game file not found (404). The file may not be deployed correctly. Please contact support.\n\nRequested: " + file + ".js");
+      } else if (xhr.status === 403) {
+        console.error("[v0] Access forbidden (403):", file + ".js");
+        alert("Access denied to game file (403). Please contact support.");
+      } else if (xhr.status >= 500) {
+        console.error("[v0] Server error (" + xhr.status + "):", file + ".js");
+        if (gameLoadAttempts < MAX_LOAD_ATTEMPTS) {
+          console.log("[v0] Retrying after server error...");
+          setTimeout(() => loadGameWithRetry(), 2000);
+        } else {
+          alert("Server error (" + xhr.status + "). Please try again later.");
+        }
+      } else {
+        console.error("[v0] Failed to load file:", file + ".js", "Status:", xhr.status, "Status Text:", xhr.statusText);
+        if (gameLoadAttempts < MAX_LOAD_ATTEMPTS) {
+          console.log("[v0] Retrying after unknown error...");
+          setTimeout(() => loadGameWithRetry(), 1000);
+        } else {
+          alert("Error loading game (Status: " + xhr.status + "). Please refresh the page.");
+        }
+      }
+    };
+    
+    const timestamp = Date.now();
+    const cacheParam = cache !== true ? timestamp : chs;
+    const url = "/" + file + ".js?cache=" + cacheParam + "&t=" + timestamp;
+    
+    console.log("[v0] Requesting URL:", url);
+    
+    xhr.open('GET', url, true);
+    xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
+    xhr.setRequestHeader("Pragma", "no-cache");
+    xhr.setRequestHeader("tcz", timestamp.toString());
+    
+    xhr.send();
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    console.log("[v0] Page loaded, checking authentication");
+    
+    // Esperar a que auth.js se cargue
+    let authCheckAttempts = 0;
+    const maxAuthCheckAttempts = 10;
+    
+    function checkAuth() {
+      authCheckAttempts++;
+      
+      if (window.PoolAuth) {
+        console.log("[v0] PoolAuth loaded successfully");
+        const session = window.PoolAuth.getCurrentUser();
+        
+        if (!session) {
+          console.log("[v0] No session found, redirecting to login");
+          window.location.href = 'geewa.html';
+          return;
+        }
+        
+        console.log("[v0] Session found, user:", session.email);
+        
+        // Mostrar botón de logout
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+          logoutBtn.classList.add('visible');
+          logoutBtn.textContent = locale.btnText === "Sign in with Google" ? "Logout" :
+                                   locale.btnText === "تسجيل الدخول عبر جوجل" ? "تسجيل الخروج" :
+                                   "Déconnexion";
+          logoutBtn.addEventListener('click', async () => {
+            try {
+              console.log("[v0] Logout button clicked");
+              await window.PoolAuth.signOut();
+              console.log("[v0] User signed out, redirecting to login");
+              window.location.href = 'geewa.html';
+            } catch (error) {
+              console.error("[v0] Logout error:", error);
+              alert("Error logging out: " + error.message);
+            }
+          });
+        }
+        
+        if (!awfawf && !gameLoadInitiated) {
+          console.log("[v0] Auto-loading game after session verification");
+          gameLoadInitiated = true;
+          awfawf = true;
+          setTimeout(() => {
+            loadGameWithRetry();
+          }, 500);
+        }
+      } else {
+        console.warn("[v0] PoolAuth not loaded yet, attempt:", authCheckAttempts);
+        if (authCheckAttempts < maxAuthCheckAttempts) {
+          setTimeout(checkAuth, 500);
+        } else {
+          console.error("[v0] PoolAuth failed to load after", maxAuthCheckAttempts, "attempts");
+          alert("Authentication system failed to load. Please refresh the page.");
+          window.location.href = 'geewa.html';
+        }
+      }
+    }
+    
+    // Iniciar verificación de autenticación
+    setTimeout(checkAuth, 500);
+  });
+</script>
+</body>
+</html>
