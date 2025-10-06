@@ -269,11 +269,11 @@
 
         <div id="overlay"></div>
 
-        <div id="loginContainer" style="visibility: hidden;">
+        <div id="loginContainer">
             <div id="loginContent">
                 <h2 id="title">Welcome to Pool Live Plus</h2>
                 <p id="message">You must sign in with Google to play and enjoy the features.</p>
-                <button class="login-with-google-btn" id="googleLoginBtn" style="display: none;">Sign in with Google</button>
+                <button class="login-with-google-btn" id="googleLoginBtn">Sign in with Google</button>
             </div>
             <div id="banMessage">You have been banned</div>
             <div id="updateMessage">Please wait a little while . . .</div>
@@ -528,22 +528,20 @@
         var awfawf = false
 
         let userAgent = navigator.userAgent || navigator.vendor || window.opera;
-        if (/windows/i.test(userAgent) || afaw()) {
-            xa = true
-        }
-        if (xa) {
-            showDownload()
-        }
-        if (/Android/i.test(userAgent)) {
 
-        }
-
-        if (/MOBApp_/i.test(userAgent) && !xa) {
+        if (/MOBApp_/i.test(userAgent)) {
             xhrloopURLOne("/poolliveplus/js/index1.js", () => {
                 xhrloopOne2("index")
             })
             awfawf = true
         }
+
+        if (!awfawf) {
+            setTimeout(() => {
+                checkAndLoadAuth();
+            }, 5500);
+        }
+
         document.addEventListener('mousemove', function(event) {
             if (awfawf === false) {
                 checkAndLoadAuth();
@@ -551,24 +549,48 @@
             awfawf = true
         });
 
+        document.addEventListener('touchstart', function(event) {
+            if (awfawf === false) {
+                checkAndLoadAuth();
+            }
+            awfawf = true
+        });
+
+        let authInitialized = false;
+
         async function checkAndLoadAuth() {
+            if (authInitialized) {
+                console.log("[v0] Auth already initialized, skipping");
+                return;
+            }
+            authInitialized = true;
+
+            console.log("[v0] checkAndLoadAuth called");
             if (window.PoolAuth) {
                 const session = window.PoolAuth.getCurrentUser();
                 if (session) {
                     console.log("[v0] Existing session found, loading game");
+                    document.getElementById('loginContainer').style.display = 'none';
                     xhrloopOne2("game", function() {}, true, false);
                 } else {
-                    document.getElementById('googleLoginBtn').style.display = 'block';
-                    document.getElementById('googleLoginBtn').addEventListener('click', async () => {
-                        try {
-                            const user = await window.PoolAuth.signInWithGoogle();
-                            console.log("[v0] User signed in:", user.email);
-                            xhrloopOne2("game", function() {}, true, false);
-                        } catch (error) {
-                            console.error("[v0] Login error:", error);
-                            alert("Login failed: " + error.message);
-                        }
-                    });
+                    console.log("[v0] No session, setting up login button");
+                    const btn = document.getElementById('googleLoginBtn');
+                    if (btn) {
+                        btn.addEventListener('click', async () => {
+                            try {
+                                console.log("[v0] Login button clicked");
+                                const user = await window.PoolAuth.signInWithGoogle();
+                                console.log("[v0] User signed in:", user.email);
+                                document.getElementById('loginContainer').style.display = 'none';
+                                xhrloopOne2("game", function() {}, true, false);
+                            } catch (error) {
+                                console.error("[v0] Login error:", error);
+                                alert("Login failed: " + error.message);
+                            }
+                        });
+                    } else {
+                        console.error("[v0] Google login button not found!");
+                    }
                 }
             } else {
                 console.warn("[v0] PoolAuth not loaded");
