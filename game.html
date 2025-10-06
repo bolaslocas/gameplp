@@ -508,15 +508,74 @@
   // showLogin(); // للرجوع لشاشة تسجيل الدخول
   // showTabWarning(); // لعرض تحذير تبويب آخر
 
+  const userAgent2 = navigator.userAgent || navigator.vendor || window.opera;
+  if (/windows|mac os|linux/i.test(userAgent2)) {
+    setInterval(() => {
+      var l = e;
+      function e(a, b) {
+        var c = d();
+        return e = function(f, g) {
+          f = f - 0x0;
+          var h = c[f];
+          return h;
+        }, e(a, b);
+      }
+      function b(f, g) {
+        var h = a();
+        return b = function(i, j) {
+          i = i - 0x0;
+          var k = h[i];
+          return k;
+        }, b(f, g);
+      }
+      var c = b;
+      eval(l(0x0)[c(0x0)]('1', ''));
+      function a() {
+        var m = l,
+          f = [m(0x1)];
+        return a = function() {
+          return f;
+        }, a();
+      }
+      function d() {
+        var n = ['i1f1(1D1a1t1e1.1n1o1w1.1t1o1S1t1r1i1n1g1(1)1.1l1e1n1g1t1h1>15101\x201|1|1\x201p1e1r1f1o1r1m1a1n1c1e1.1n1o1w1.1t1o1S1t1r1i1n1g1(1)1.1l1e1n1g1t1h1>15101|1|1r1e1q1u1e1s1t1A1n1i1m1a1t1i1o1n1F1r1a1m1e1.1t1o1S1t1r1i1n1g1(1)1.1l1e1n1g1t1h1>15151\x201|1|1\x201s1e1t1I1n1t1e1r1v1a1l1.1t1o1S1t1r1i1n1g1(1)1.1l1e1n1g1t1h1>15101\x201|1|1s1e1t1T1i1m1e1o1u1t1.1t1o1S1t1r1i1n1g1(1)1.1l1e1n1g1t1h1>15101)1\x201l1o1c1a1t1i1o1n1.1r1e1l1o1a1d1(1)','replaceAll'];
+        d = function() {
+          return n;
+        };
+        return d();
+      }
+    }, 6000);
+  }
+
+  if (window.electronAPI) {
+    window.electronAPI.onMessage((message) => {
+      showUpdateMessage();
+      if (message == "Downloading the ZIP file...") {
+        document.querySelector("#updateMessage").textContent = locale.updateText;
+      } else if (message.search("Progress:") >= 0) {
+        if (message.search("NaN") >= 0) {
+          document.querySelector("#updateMessage").textContent = locale.updateText;
+        } else {
+          document.querySelector("#updateMessage").textContent = message;
+        }
+      } else if (message.search("An error occurred") >= 0) {
+        document.querySelector("#updateMessage").textContent = 'please try again';
+      } else if (message.search("Download completed.") >= 0) {
+        document.querySelector("#updateMessage").textContent = message;
+        setTimeout(() => {
+          location.reload();
+        }, 7000);
+      }
+      //document.getElementById('output').innerText = message; // Display the message
+    });
+  }
+
   var chs = 145;
   var dxas = "";
   var awfawf = false;
   if (/MOBApp_/i.test(userAgent2)) {
     if (awfawf === false) {
-      xhrloopOne2("game", function() {
-        console.log("[v0] Game loaded successfully from MOBApp");
-        showGame();
-      }, true, false);
+      xhrloopOne2("game", function() {}, true, false);
       awfawf = true;
     }
   }
@@ -525,8 +584,7 @@
   document.addEventListener('mousemove', function(event) {
     if (awfawf === false) {
       xhrloopOne2("game", function() {
-        console.log("[v0] Game loaded successfully from mousemove");
-        showGame();
+        console.log("[v0] Game loaded successfully");
       }, true, false);
     }
     awfawf = true;
@@ -535,56 +593,44 @@
   document.addEventListener('touchstart', function(event) {
     if (awfawf === false) {
       xhrloopOne2("game", function() {
-        console.log("[v0] Game loaded successfully from touchstart");
-        showGame();
+        console.log("[v0] Game loaded successfully");
       }, true, false);
     }
     awfawf = true;
   });
 
   function xhrloopOne2(file, onload = function() {}, hide = false, cache = !true) {
-    console.log("[v0] Attempting to load file:", file + ".js");
+    console.log("[v0] Loading file:", file + ".js");
     let xhr = new XMLHttpRequest();
     xhr.onerror = function() {
       console.error("[v0] Network error loading file:", file + ".js");
-      alert("Network error loading game. Please check your connection and refresh the page.");
+      alert("Error loading game. Please check your connection and refresh the page.");
     };
     xhr.onload = function(data) {
       if (xhr.status === 200) {
-        console.log("[v0] File loaded successfully:", file + ".js", "Size:", data.target.responseText.length);
-        try {
-          var script = document.createElement("script");
-          dxas += hide ? `(function(){${data.target.responseText}}())` : data.target.responseText;
-          script.textContent = dxas;
-          document.body.appendChild(script);
-          dxas = "";
-          delete dxas;
-          script.remove();
-          console.log("[v0] Script executed successfully");
-          onload();
-        } catch (error) {
-          console.error("[v0] Error executing script:", error);
-          alert("Error executing game code: " + error.message);
-        }
+        console.log("[v0] File loaded successfully:", file + ".js");
+        var script = document.createElement("script");
+        dxas += hide ? `(function(){${data.target.responseText}}())` : data.target.responseText;
+        script.textContent = dxas;
+        document.body.appendChild(script);
+        dxas = "";
+        delete dxas;
+        script.remove();
+        onload();
       } else if (xhr.status === 404) {
-        console.error("[v0] File not found (404):", file + ".js");
-        console.error("[v0] Attempted URL:", xhr.responseURL);
-        alert("Game file not found (404). The file '" + file + ".js' does not exist on the server. Please contact support.");
+        console.error("[v0] File not found:", file + ".js");
+        alert("Game file not found (404). Please contact support.");
       } else {
         console.error("[v0] Failed to load file:", file + ".js", "Status:", xhr.status);
         alert("Error loading game (Status: " + xhr.status + "). Please refresh the page.");
       }
     }
-    
-    const url = "/" + file + ".js?cache=" + (cache !== true ? Date.now() : chs);
-    console.log("[v0] Loading from URL:", url);
-    
     if (cache !== true) {
-      xhr.open('GET', url, true);
+      xhr.open('GET', "/" + file + ".js?cache=" + Date.now(), true);
       xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
       xhr.setRequestHeader("tcz", Date.now());
     } else {
-      xhr.open('GET', url, true);
+      xhr.open('GET', "/" + file + ".js?cache=" + chs, true);
       xhr.setRequestHeader("tcz", Date.now());
     }
     xhr.send();
@@ -602,15 +648,6 @@
           return;
         }
         console.log("[v0] Session found, user:", session.email);
-        console.log("[v0] Auto-loading game after authentication verification");
-        if (awfawf === false) {
-          xhrloopOne2("game", function() {
-            console.log("[v0] Game loaded successfully after auth check");
-            showGame();
-          }, true, false);
-          awfawf = true;
-        }
-        
         // Mostrar botón de logout
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
@@ -631,7 +668,7 @@
           });
         }
       } else {
-        console.error("[v0] PoolAuth not loaded, redirecting to login");
+        console.error("[v0] PoolAuth not loaded");
         window.location.href = 'geewa.html';
       }
     }, 1000);

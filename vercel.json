@@ -34,7 +34,7 @@
       ]
     },
     {
-      "source": "/geewa.html",
+      "source": "/(geewa|game)\\.html",
       "headers": [
         {
           "key": "Cache-Control",
