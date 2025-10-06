@@ -5,24 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1">
 <title>Pool Live Plus</title>
 <style>
+// ... existing code ...
 </style>
 </head>
 <body>
+// ... existing code ...
 
 <!-- Updated Firebase SDK to use CDN -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-<!-- Cargar auth.js antes del script principal -->
+<!-- <CHANGE> Cargar auth.js antes del script principal -->
 <script src="auth.js"></script>
 
 <script>
+// ... existing code ...
 
   var chs = 145;
   var dxas = "";
   var awfawf = false;
   
+  // <CHANGE> Sistema robusto de carga con reintentos
   let gameLoadAttempts = 0;
   const MAX_LOAD_ATTEMPTS = 3;
   let gameLoadTimeout = null;
@@ -66,6 +70,7 @@
     }
   }
 
+  // <CHANGE> Mejorar el manejo de eventos para cargar el juego
   let gameLoadInitiated = false;
   
   function initiateGameLoad() {
@@ -81,6 +86,7 @@
   document.addEventListener('touchstart', initiateGameLoad, { once: true });
   document.addEventListener('click', initiateGameLoad, { once: true });
 
+  // <CHANGE> Función mejorada de carga con mejor manejo de errores
   function xhrloopOne2(file, onload = function() {}, hide = false, cache = !true) {
     console.log("[v0] Loading file:", file + ".js");
     let xhr = new XMLHttpRequest();
@@ -168,6 +174,7 @@
       }
     };
     
+    // <CHANGE> Construir URL con mejor manejo de cache
     const timestamp = Date.now();
     const cacheParam = cache !== true ? timestamp : chs;
     const url = "/" + file + ".js?cache=" + cacheParam + "&t=" + timestamp;
@@ -182,6 +189,7 @@
     xhr.send();
   }
 
+  // <CHANGE> Verificación de autenticación mejorada
   window.addEventListener('DOMContentLoaded', function() {
     console.log("[v0] Page loaded, checking authentication");
     
@@ -224,6 +232,7 @@
           });
         }
         
+        // <CHANGE> Iniciar carga del juego automáticamente después de verificar sesión
         if (!awfawf && !gameLoadInitiated) {
           console.log("[v0] Auto-loading game after session verification");
           gameLoadInitiated = true;
