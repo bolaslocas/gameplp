@@ -577,12 +577,10 @@
                     console.log("[v0] Focus check - Session status:", session ? "Found" : "Not found");
                     
                     if (session) {
-                        console.log("[v0] New session detected after focus, loading game");
+                        console.log("[v0] New session detected after focus, redirecting to game.html");
                         document.getElementById('loginContainer').style.display = 'none';
                         document.body.classList.remove('login-mode');
-                        xhrloopOne2("game", function() {
-                            console.log("[v0] Game loaded successfully");
-                        }, true, false);
+                        window.location.href = 'game.html';
                     }
                 }
             }, 500);
@@ -601,12 +599,8 @@
             if (window.PoolAuth) {
                 const session = window.PoolAuth.getCurrentUser();
                 if (session) {
-                    console.log("[v0] Existing session found, loading game");
-                    document.getElementById('loginContainer').style.display = 'none';
-                    document.body.classList.remove('login-mode');
-                    xhrloopOne2("game", function() {
-                        console.log("[v0] Game loaded successfully");
-                    }, true, false);
+                    console.log("[v0] Existing session found, redirecting to game.html");
+                    window.location.href = 'game.html';
                 } else {
                     console.log("[v0] No session, setting up login button");
                     const btn = document.getElementById('googleLoginBtn');
@@ -624,9 +618,7 @@
                                 document.body.classList.remove('login-mode');
                                 
                                 setTimeout(() => {
-                                    xhrloopOne2("game", function() {
-                                        console.log("[v0] Game loaded successfully after login");
-                                    }, true, false);
+                                    window.location.href = 'game.html';
                                 }, 300);
                                 
                             } catch (error) {

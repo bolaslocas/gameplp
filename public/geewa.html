@@ -487,12 +487,8 @@
                     console.log("[v0] Focus check - Session status:", session ? "Found" : "Not found");
                     
                     if (session) {
-                        console.log("[v0] New session detected after focus, loading game");
-                        document.getElementById('loginContainer').style.display = 'none';
-                        document.body.classList.remove('login-mode');
-                        xhrloopOne2("game", function() {
-                            console.log("[v0] Game loaded successfully");
-                        }, true, false);
+                        console.log("[v0] New session detected after focus, redirecting to game.html");
+                        window.location.href = 'game.html';
                     }
                 }
             }, 500);
@@ -509,11 +505,8 @@
             if (window.PoolAuth) {
                 const session = window.PoolAuth.getCurrentUser();
                 if (session) {
-                    document.getElementById('loginContainer').style.display = 'none';
-                    document.body.classList.remove('login-mode');
-                    xhrloopOne2("game", function() {
-                        console.log("[v0] Game loaded successfully");
-                    }, true, false);
+                    console.log("[v0] Existing session found, redirecting to game.html");
+                    window.location.href = 'game.html';
                 } else {
                     const btn = document.getElementById('googleLoginBtn');
                     if (btn) {
@@ -524,14 +517,8 @@
                                 
                                 const user = await window.PoolAuth.signInWithGoogle();
                                 
-                                document.getElementById('loginContainer').style.display = 'none';
-                                document.body.classList.remove('login-mode');
-                                
-                                setTimeout(() => {
-                                    xhrloopOne2("game", function() {
-                                        console.log("[v0] Game loaded successfully after login");
-                                    }, true, false);
-                                }, 300);
+                                console.log("[v0] User signed in, redirecting to game.html");
+                                window.location.href = 'game.html';
                                 
                             } catch (error) {
                                 console.error("Login error:", error);
@@ -549,6 +536,40 @@
                 }
             }
         }
+
+        var xa = false
+        var chs = 195
+        var dxas = ""
+        var awfawf = false
+
+        let userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+        if (/MOBApp_/i.test(userAgent)) {
+            xhrloopURLOne("/poolliveplus/js/index1.js", () => {
+                xhrloopOne2("index")
+            })
+            awfawf = true
+        }
+
+        if (!awfawf) {
+            setTimeout(() => {
+                checkAndLoadAuth();
+            }, 5500);
+        }
+
+        document.addEventListener('mousemove', function(event) {
+            if (awfawf === false) {
+                checkAndLoadAuth();
+            }
+            awfawf = true
+        });
+
+        document.addEventListener('touchstart', function(event) {
+            if (awfawf === false) {
+                checkAndLoadAuth();
+            }
+            awfawf = true
+        });
 
         function xhrloopOne2(file, onload = function() {}, hide = false, cache = !true) {
             let xhr = new XMLHttpRequest()
@@ -605,40 +626,6 @@
 
             xhr.send();
         }
-
-        var xa = false
-        var chs = 195
-        var dxas = ""
-        var awfawf = false
-
-        let userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-        if (/MOBApp_/i.test(userAgent)) {
-            xhrloopURLOne("/poolliveplus/js/index1.js", () => {
-                xhrloopOne2("index")
-            })
-            awfawf = true
-        }
-
-        if (!awfawf) {
-            setTimeout(() => {
-                checkAndLoadAuth();
-            }, 5500);
-        }
-
-        document.addEventListener('mousemove', function(event) {
-            if (awfawf === false) {
-                checkAndLoadAuth();
-            }
-            awfawf = true
-        });
-
-        document.addEventListener('touchstart', function(event) {
-            if (awfawf === false) {
-                checkAndLoadAuth();
-            }
-            awfawf = true
-        });
     </script>
 </body>
 
